@@ -48,7 +48,7 @@ function getCraftFromHash(hash) {
             return new Craft(recipe,mat_tiers,ingreds,attackSpeed,"1"+name);
         }
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return undefined;
     }
     

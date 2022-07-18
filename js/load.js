@@ -11,6 +11,15 @@ let itemMap;
 let idMap;
 let redirectMap;
 let itemLists = new Map();
+let higherItemLists = new Map();
+
+var stat = {
+    spellDamage:[],
+    spellCost:[],
+    EHP:0,
+    URL:""
+}
+
 /*
  * Load item set from local DB. Calls init() on success.
  */
@@ -209,6 +218,7 @@ function init_maps() {
     redirectMap = new Map();
     for (const it of itemTypes) {
         itemLists.set(it, []);
+        higherItemLists.set(it, []);
     }
 
     let noneItems = [
@@ -250,11 +260,132 @@ function init_maps() {
 
         noneItems[i] = item;
     }
+    let popularItems = [
+        "Virtuoso",
+        "Albacore",
+        "Capricorn",
+        "Dragon's Eye Bracelet",
+        "Seipodon",
+        "Millennium",
+        "Winter's Essence",
+        "Photon",
+        "Sizzling Shawl",
+        "Yang",
+        "Brainwash",
+        "Paradox",
+        "Nether's Scar",
+        "Recalcitrance",
+        "Cumulonimbus",
+        "Leictreach Makani",
+        "Tesla",
+        "The Golem",
+        "Pisces",
+        "Vaward",
+        "Pro Tempore",
+        "Facile",
+        "Aquamarine",
+        "Morph-Stardust",
+        "Second Wind",
+        "Prism",
+        "Aquarius",
+        "Sagittarius",
+        "Shawl of Gaea",
+        "Horizon",
+        "Burnout",
+        "Olive",
+        "Vacuum",
+        "Time Rift",
+        "Seipodon",
+        "Aphotic",
+        "Powder Snow",
+        "Adrenaline",
+        "Derecho",
+        "Chestplate of Ineptitude",
+        "Calidade Mail",
+        "Buster Bracer",
+        "Libra",
+        "Atlas",
+        "Tenuto",
+        "Pro Tempore",
+        "Finesse",
+        "Hetusol",
+        "Detective's Ring",
+        "Charm of the Storms",
+        "Infernal Impulse",
+        "Rekkr",
+        "Chain Rule",
+        "Pisces",
+        "Earth Breaker",
+        "Blind Thrust",
+        "Cancer",
+        "Medeis",
+        "Electro Mage's Boots",
+        "Stellar",
+        "Draoi Fair",
+        "Metamorphosis",
+        "Vacuum",
+        "Adrenaline",
+        "Nighthawk",
+        "Greaves of the Veneer",
+        "Azurite",
+        "Raindrop",
+        "Founder",
+        "Stratosphere",
+        "Dark Shroud",
+        "Venison",
+        "Sodeta Boots",
+        "Lazarus' Brace",
+        "Generator Amulet",
+        "Shawl of Gaea",
+        "Physalis",
+        "Virgo",
+        "Downfall",
+        "Guillotine",
+        "Flummox",
+        "Eyes on All",
+        "Darksteel Full Helm",
+        "Struggle",
+        "Old Keeper's Ring",
+        "Darksteel Ring",
+        "Hamsey's Brilliance",
+        "Power Cell",
+        "Petrichor",
+        "Ex Nihilo",
+        "Magnet Repulsor",
+        "Efteling",
+        "Cracklers",
+        "Third Eye",
+        "Grillface",
+        "Philophilia",
+        "Dionaea",
+        "Kickback",
+        "Leggings of Desolation",
+        "Frenzied Mockery",
+        "Conflagrate",
+        "Curador Boots",
+        "Unravel",
+        "Pandemonium",
+        "Alkahest",
+        "Coal Duster",
+        "Caterpillar",
+        "Scorpio",
+        "Saundersi Signet",
+        "Anamnesis",
+        "Amanuensis",
+        "Smoldering Apron",
+        "Thanos Brand",
+        "Aliez",
+        "Reminiscence",
+        "Stellar",
+    ]
     items = items.concat(noneItems);
     //console.log(items);
     for (const item of items) {
         if (item.remapID === undefined) {
             itemLists.get(item.type).push(item.displayName);
+            if (item.lvl >= 88 && (item.category == "weapon" || popularItems.indexOf(item.name) != -1 || item.restrict == "Untradable")) {
+                higherItemLists.get(item.type).push(item.displayName);
+            }
             itemMap.set(item.displayName, item);
             if (noneItems.includes(item)) {
                 idMap.set(item.id, "");

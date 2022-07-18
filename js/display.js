@@ -205,7 +205,7 @@ function displaySetBonuses(parent_id,build) {
         }
         mock_item.set("powders", []);
         displayExpandedItem(mock_item, set_elem.id);
-        console.log(mock_item);
+        //console.log(mock_item);
     }
 }
 
@@ -215,10 +215,10 @@ function displayBuildStats(parent_id,build){
     // #commands create a new element.
     // !elemental is some janky hack for elemental damage.
     // normals just display a thing.
-
     let display_commands = build_overall_display_commands;
 
     // Clear the parent div.
+    //This creates the title
     setHTML(parent_id, "");
     let parent_div = document.getElementById(parent_id);
     let title = document.createElement("p");
@@ -236,6 +236,7 @@ function displayBuildStats(parent_id,build){
         set_summary_elem.classList.add('left');
         set_summary_elem.textContent = "Set Summary:";
         parent_div.append(set_summary_elem);
+
         for (const [setName, count] of build.activeSetCounts) {
             const active_set = sets[setName];
             if (active_set["hidden"]) { continue; }
@@ -1245,8 +1246,8 @@ function displayPoisonDamage(overallparent_elem, build) {
 }
 
 function displayMeleeDamage(parent_elem, overallparent_elem, meleeStats){
-    console.log("Melee Stats");
-    console.log(meleeStats);
+    // console.log("Melee Stats");
+    // console.log(meleeStats);
     let tooltipinfo = meleeStats[13];
     let attackSpeeds = ["Super Slow", "Very Slow", "Slow", "Normal", "Fast", "Very Fast", "Super Fast"];
     //let damagePrefixes = ["Neutral Damage: ","Earth Damage: ","Thunder Damage: ","Water Damage: ","Fire Damage: ","Air Damage: "];
@@ -1813,6 +1814,8 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
         second.classList.add("Mana");
         second.classList.add("tooltip");
 
+        stat.spellCost.push(second.textContent)
+
         let int_redux = skillPointsToPercentage(build.total_skillpoints[2]).toFixed(2);
         let spPct_redux = (build.statMap.get("spPct" + spellIdx)/100).toFixed(2);
         let spRaw_redux = (build.statMap.get("spRaw" + spellIdx)).toFixed(2);
@@ -1875,7 +1878,6 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
         part_div.append(subtitle_elem);
 
         if (part.type === "damage") {
-            //console.log(build.expandedStats);
             let _results = calculateSpellDamage(stats, part.conversion,
                                     stats.get("sdRaw") + stats.get("rainbowRaw"), stats.get("sdPct") + build.externalStats.get("sdPct"), 
                                     part.multiplier / 100, build.weapon, build.total_skillpoints, build.damageMultiplier, build.externalStats);
@@ -1892,6 +1894,9 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
             let nonCritAverage = (totalDamNormal[0]+totalDamNormal[1])/2 || 0;
             let critAverage = (totalDamCrit[0]+totalDamCrit[1])/2 || 0;
             let averageDamage = (1-critChance)*nonCritAverage+critChance*critAverage || 0;
+
+            stat.spellDamage.push(averageDamage)
+            //IMPORTANT Damage for all spells
 
             let averageLabel = document.createElement("p");
             averageLabel.textContent = "Average: "+averageDamage.toFixed(2);
@@ -1916,6 +1921,7 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
             }
             
             function _damage_display(label_text, average, result_idx) {
+                //IMPORTANT var average = 2nd spell damage?
                 let label = document.createElement("p");
                 label.textContent = label_text+average.toFixed(2);
                 label.classList.add("damageSubtitle");

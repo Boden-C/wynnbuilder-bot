@@ -6,6 +6,7 @@ const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 //updates all the OGP tags for a webpage. Should be called when build changes
 function updateOGP() {
     //update the embed URL
+    //stat.URL = url_base+location.hash //CHANGED
     let url_elem = document.getElementById("ogp-url");
     if (url_elem) {
         url_elem.content = url_base+location.hash;

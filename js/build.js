@@ -352,7 +352,7 @@ class Build{
         this.items = this.equipment.concat([this.weapon]);
         // return [equip_order, best_skillpoints, final_skillpoints, best_total];
         let result = calculate_skillpoints(this.equipment, this.weapon);
-        console.log(result);
+        //console.log("WYNNBUILDER: input build",result);
         this.equip_order = result[0];
         // How many skillpoints the player had to assign (5 number)
         this.base_skillpoints = result[1];

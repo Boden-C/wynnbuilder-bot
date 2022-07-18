@@ -1,9 +1,11 @@
 const url_tag = location.hash.slice(1);
-// console.log(url_base);
-// console.log(url_tag);
+//console.log(url_base);
+//console.log(url_tag);
 
 
 const BUILD_VERSION = "7.0.19";
+
+var isImpossibleBuild = false
 
 function setTitle() {
     let text;
@@ -442,7 +444,7 @@ function calculateBuild(save_skp, skp){
             while (input) {
                 let first = input.slice(0, 2);
                 let powder = powderIDs.get(first);
-                console.log(powder);
+                //console.log(powder);
                 if (powder === undefined) {
                     errorederrors.push(first);
                 } else {
@@ -463,7 +465,7 @@ function calculateBuild(save_skp, skp){
 
         let level = document.getElementById("level-choice").value;
         player_build = new Build(level, equipment, powderings, new Map(), errors);
-        console.log(player_build);
+        //console.log(player_build);
         for (let i of document.getElementsByClassName("hide-container-block")) {
 			i.style.display = "block";
         }
@@ -471,8 +473,8 @@ function calculateBuild(save_skp, skp){
 			i.style.display = "grid";
         }
 
-        console.log(player_build.toString());
-        displayEquipOrder(document.getElementById("build-order"),player_build.equip_order);
+        //console.log(player_build.toString());
+        //displayEquipOrder(document.getElementById("build-order"),player_build.equip_order); REMOVED
 
         
 
@@ -557,7 +559,8 @@ function handleBuilderError(error) {
 /* Updates all build statistics based on (for now) the skillpoint input fields and then calculates build stats.
 */
 function updateStats() {
-    
+    stat.spellDamage = []; //CHANGED
+    stat.spellCost = [];
     let specialNames = ["Quake", "Chain_Lightning", "Curse", "Courage", "Wind_Prison"];
     for (const sName of specialNames) {
         for (let i = 1; i < 6; i++) {
@@ -566,7 +569,7 @@ function updateStats() {
             if (elem.classList.contains("toggleOn")) { //toggle the pressed button off
                 elem.classList.remove("toggleOn");
                 let special = powderSpecialStats[specialNames.indexOf(sName)];
-                console.log(special);
+                //console.log(special);
                 if (special["weaponSpecialEffects"].has("Damage Boost")) { 
                     if (name === "Courage" || name === "Curse") { //courage is universal damage boost
                         //player_build.damageMultiplier -= special.weaponSpecialEffects.get("Damage Boost")[i-1]/100;
@@ -612,7 +615,7 @@ function updateStats() {
         player_build.statMap.set(id, parseInt(getValue(id)));
     }
     player_build.aggregateStats();
-    console.log(player_build.statMap);
+    //console.log(player_build.statMap);
     calculateBuildStats();
 }
 /* Updates all spell boosts
@@ -747,6 +750,9 @@ function updatePowderSpecials(buttonId, recalcStats) {
 /* Calculates all build statistics and updates the entire display.
 */
 function calculateBuildStats() {
+    stat.spellDamage = []; //CHANGED
+    stat.spellCost = [];
+    //console.log("WYNNBUILDER: raw player build",player_build)
     const assigned = player_build.base_skillpoints;
     const skillpoints = player_build.total_skillpoints;
     let skp_effects = ["% more damage dealt.","% chance to crit.","% spell cost reduction.","% less damage taken.","% chance to dodge."];
@@ -785,10 +791,14 @@ function calculateBuildStats() {
     summarybox.append(skpRow);
     summarybox.append(remainingSkp);
     if(player_build.assigned_skillpoints > levelToSkillPoints(player_build.level)){
+        if (player_build.assigned_skillpoints > levelToSkillPoints(player_build.level) + 10) {
+            isImpossibleBuild = true;
+        }
         let skpWarning = document.createElement("p");
         //skpWarning.classList.add("itemp");
         skpWarning.classList.add("warning");
         skpWarning.classList.add("itemp");
+        //IMPORTANT
         skpWarning.textContent = "WARNING: Too many skillpoints need to be assigned!";
         let skpCount = document.createElement("p");
         skpCount.classList.add("itemp");
@@ -812,6 +822,7 @@ function calculateBuildStats() {
                 lvlWarning = document.createElement("p");
                 lvlWarning.classList.add("itemp");
                 lvlWarning.classList.add("warning");
+                //maybe important
                 lvlWarning.textContent = "WARNING: A level " + player_build.level + " player cannot use some piece(s) of this build."
             }
             let baditem = document.createElement("p"); 
@@ -828,10 +839,11 @@ function calculateBuildStats() {
         const bonus = sets[setName].bonuses[count-1];
         // console.log(setName);
         if (bonus["illegal"]) {
-            console.log("mmmm");
+            //console.log("mmmm");
             let setWarning = document.createElement("p");
             setWarning.classList.add("itemp");
             setWarning.classList.add("warning");
+            //IMPORTANT
             setWarning.textContent = "WARNING: illegal item combination: " + setName
             summarybox.append(setWarning);
         }
@@ -859,9 +871,11 @@ function calculateBuildStats() {
         displaySpellDamage(parent_elem, overallparent_elem, player_build, spells[i], i+1);
     }
 
-    location.hash = encodeBuild();
+    let tag = encodeBuild();
+    location.hash = tag;
+    stat.URL = "https://wynnbuilder.github.io/#"+tag;
     clear_highlights();
-    updateOGP();
+    //updateOGP(); REMOVED
 }
 
 function copyBuild() {
