@@ -5,8 +5,6 @@ const url_tag = location.hash.slice(1);
 
 const BUILD_VERSION = "7.0.19";
 
-var isImpossibleBuild = false
-
 function setTitle() {
     let text;
     if (url_base.includes("hppeng-wynn")) {
@@ -559,8 +557,6 @@ function handleBuilderError(error) {
 /* Updates all build statistics based on (for now) the skillpoint input fields and then calculates build stats.
 */
 function updateStats() {
-    stat.spellDamage = []; //CHANGED
-    stat.spellCost = [];
     let specialNames = ["Quake", "Chain_Lightning", "Curse", "Courage", "Wind_Prison"];
     for (const sName of specialNames) {
         for (let i = 1; i < 6; i++) {
@@ -750,8 +746,6 @@ function updatePowderSpecials(buttonId, recalcStats) {
 /* Calculates all build statistics and updates the entire display.
 */
 function calculateBuildStats() {
-    stat.spellDamage = []; //CHANGED
-    stat.spellCost = [];
     //console.log("WYNNBUILDER: raw player build",player_build)
     const assigned = player_build.base_skillpoints;
     const skillpoints = player_build.total_skillpoints;
@@ -791,9 +785,6 @@ function calculateBuildStats() {
     summarybox.append(skpRow);
     summarybox.append(remainingSkp);
     if(player_build.assigned_skillpoints > levelToSkillPoints(player_build.level)){
-        if (player_build.assigned_skillpoints > levelToSkillPoints(player_build.level) + 10) {
-            isImpossibleBuild = true;
-        }
         let skpWarning = document.createElement("p");
         //skpWarning.classList.add("itemp");
         skpWarning.classList.add("warning");
@@ -873,7 +864,7 @@ function calculateBuildStats() {
 
     let tag = encodeBuild();
     location.hash = tag;
-    stat.URL = "https://wynnbuilder.github.io/#"+tag;
+    player_build.statMap.set("URL","https://wynnbuilder.github.io/#"+tag);
     clear_highlights();
     //updateOGP(); REMOVED
 }

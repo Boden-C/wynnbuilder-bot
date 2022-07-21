@@ -13,13 +13,6 @@ let redirectMap;
 let itemLists = new Map();
 let higherItemLists = new Map();
 
-var stat = {
-    spellDamage:[],
-    spellCost:[],
-    EHP:0,
-    URL:""
-}
-
 /*
  * Load item set from local DB. Calls init() on success.
  */

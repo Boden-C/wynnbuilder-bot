@@ -377,6 +377,10 @@ class Build{
         }
         this.errors = errors;
         if (errors.length > 0) this.errored = true;
+
+        this.statMap.set("spellDamage",[])
+        this.statMap.set("spellCost",[])
+        this.statMap.set("spellHeal",[])
     }  
 
     /*Returns build in string format
@@ -551,5 +555,21 @@ class Build{
         statMap.set("defRaw", [statMap.get("eDef"), statMap.get("tDef"), statMap.get("wDef"), statMap.get("fDef"), statMap.get("aDef")]);
         statMap.set("defBonus", [statMap.get("eDefPct"), statMap.get("tDefPct"), statMap.get("wDefPct"), statMap.get("fDefPct"), statMap.get("aDefPct")]);
         statMap.set("defMult", classDefenseMultipliers.get(this.weapon.get("type")));
+    }
+
+    getStats() {
+        return new Map([
+            ["assignedSkillPoints",this.assigned_skillpoints || 0],
+            ["URL",this.statMap.get("URL")],
+            ["meleeDPS",this.getMeleeStats()[10] || 0],
+            ["attackSpeed",this.getMeleeStats()[11]],
+            ["spellDamage",this.statMap.get("spellDamage") || [0]],
+            ["spellCost",this.statMap.get("spellCost") || [6,2,8,8]],
+            ["spellHeal",this.statMap.get("spellHeal") || 0], //first pulse, 2nd & 3rd pulse, total heal, ally first pulse, ally 2nd & 3rd pulse, ally total heal
+            ["manaRegen",this.statMap.get("mr") || 0],
+            ["manaSteal",this.statMap.get("ms") || 0],
+            ["EHP",this.getDefenseStats()[1]], //EHP, EHP no agi
+            ["walkSpeed",this.statMap.get("spd") || 0]
+        ])
     }
 }

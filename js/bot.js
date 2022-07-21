@@ -21,23 +21,23 @@ function delay(time) {
 function dumbNameChangeLater() {
    console.log("STARTING.")
    higherItemLists = new Map([
-      ["helmet",["Blue Mask","Caesura","Cumulonimbus","Third Eye","Anamnesis","Cancer֎","Pride of the Aerie","Shawl of Gaea","Ambertoise Shell","Spectre","Albedo","Phoenix Prince's Crown"]],
+      ["helmet",["Blue Mask","Caesura","Cumulonimbus","Sparkweaver"]], //,"Third Eye","Cancer֎","Spectre","Anamnesis","Sizzling Shawl"
       ["chestplate",["Libra","Far Cosmos","Soul Signal","Medeis","Time Rift"]],
-      ["leggings",["Greaves of the Veneer","Vaward","Dark Shroud","Anxiolytic","Second Wind","Mirror's Edge","Gemini","Adrenaline"]],
-      ["boots",["Stardew","Capricorn","Silt of the Seafloor","Pro Tempore"]],
+      ["leggings",["Greaves of the Veneer","Vaward","Dark Shroud","Anxiolytic","Ophiuchus","Adrenaline","Seipodon","Asphyxia"]],
+      ["boots",["Stardew","Pro Tempore","Capricorn","Magnet Repulsor"]],
       ["necklace",["Tenuto","Diamond Fusion Necklace","Diamond Hydro Necklace"]],
-      ["ring",["Facile","Diamond Hydro Ring","Prism","Moon Pool Circlet","Finesse"]],
+      ["ring",["Facile","Diamond Hydro Ring","Prism","Moon Pool Circlet"]],
       ["bracelet",["Dragon's Eye Bracelet","Prowess"]]
    ])
    console.log("STARTING..")
    var count = 0
    console.log("STARTING...")
    for (const i in higherItemLists.get("helmet")) {
-      console.log("BOT: testing ",higherItemLists.get("helmet")[i],". Percent done: ",i/higherItemLists.get("helmet").length)
+      console.log("BOT: testing ",higherItemLists.get("helmet").reverse()[i],". Percent done: ",100*i/higherItemLists.get('helmet').length,"%")
       document.getElementById("helmet-choice").value = higherItemLists.get("helmet")[i]
 
       for (const j in higherItemLists.get("chestplate")) {
-         console.log("BOT: reached ",higherItemLists.get("chestplate")[j],"at",count,". Percent done: ",i/higherItemLists.get("helmet").length+j/(higherItemLists.get("helmet").length*higherItemLists.get("chestplate").length))
+         console.log("BOT: reached ",higherItemLists.get("chestplate")[j],"at",count,". Percent done: ",100*(i/higherItemLists.get("helmet").length+j/(higherItemLists.get("helmet").length*higherItemLists.get("chestplate").length)),"%")
          document.getElementById("chestplate-choice").value = higherItemLists.get("chestplate")[j]
 
          for (const k in higherItemLists.get("leggings")) {
@@ -72,9 +72,10 @@ function dumbNameChangeLater() {
 
                            calculateBuild()
                            delay(1000)
+
+                           let stat = player_build.getStats();
                            
-                           if (isImpossibleBuild) {
-                              isImpossibleBuild = false
+                           if (stat.get("skillPoints") > 210) {
                               continue;
                            }
                            const available = levelToSkillPoints(player_build.level) - player_build.assigned_skillpoints
@@ -84,10 +85,15 @@ function dumbNameChangeLater() {
                               updateStats();
                               delay(1000)
                            }
-                           stat.EHP = player_build.getDefenseStats()[1][0] // || player_build.statMap.get("mr") < 1
-                           if (stat.EHP < 48000 || stat.spellDamage[1] < 19000 || player_build.statMap.get("spd") < -100 || stat.spellCost[2] > 3) {
+                           manaSustain = (stat.get("manaRegen")*2)+(stat.get("manaSteal")-4)
+                           if (!(
+                              ((stat.get("EHP")[0] > 40000 && stat.get("EHP")[1] > 30000) || (stat.get("EHP")[1] > 35000 && stat.get("spellHeal")[0] > 3300)) && 
+                              stat.get("spellDamage")[1] > 22000 && 
+                              stat.get("walkSpeed") > -10 && 
+                              ((stat.get("spellCost")[2] > 2 && manaSustain > 12) || (manaSustain >= 8) || (stat.get("spellCost")[2] < 2 && manaSustain < 8))
+                              )) {
                               if (count%1000 == 0) {
-                                 console.log(count+"th iteration failed, build:",stat.spellDamage[1],stat.EHP)
+                                 console.log(count+"th iteration failed, build:",manaSustain,stat.get("URL"))
                               }
                               continue;
                            }
@@ -108,9 +114,11 @@ function dumbNameChangeLater() {
                               console.log("=======NEW BUILD========")
                            }
                            
-                           console.log("BOT: Damage: ",Math.round(stat.spellDamage[1])," (",stat.spellCost[2]," mana)")
-                           console.log("BOT: EHP: ",Math.round(stat.EHP)," (",player_build.statMap.get("spd")," walk speed)")
-                           console.log(stat.URL)
+                           console.log(`BOT: Damage: ${Math.round(stat.get("spellDamage")[1])} (${stat.get("spellCost")[2]} mana)`)
+                           console.log(`BOT: Mana Sustain ${manaSustain}, ${stat.get("manaRegen")} mana regen / ${stat.get("manaSteal")-6} mana steal`)
+                           console.log(`BOT: EHP: ${Math.round(stat.get("EHP")[0])}/${Math.round(stat.get("EHP")[1])} (${stat.get("spellHeal")[0]} first pulse)`)
+                           console.log(`BOT: Misc. : ${stat.get("walkSpeed")} walk speed`)
+                           console.log(stat.get("URL"))
                            // console.log("BOT: Melee Stats", player_build.getMeleeStats())
 
                            // //IMPORTANT:defense stats[0] = total hp, [1][0] = ehp, [1][1] = ehp no agi, [2] = hp regen, [3][0] = effective hp regen, [5] = array of elemental defenses
@@ -129,10 +137,13 @@ function dumbNameChangeLater() {
 
 
 function returnResult() {
-   stat.EHP = player_build.getDefenseStats()[1][0]
-   console.log("BOT: Damage: ",Math.round(stat.spellDamage[1])," (",stat.spellCost[2]," mana)")
-   console.log("BOT: EHP: ",Math.round(stat.EHP)," (",player_build.statMap.get("spd")," walk speed)")
-   console.log(stat.URL)
+   let stat = player_build.getStats();
+   manaSustain = (stat.get("manaRegen")*2)+(stat.get("manaSteal"))
+   console.log(`BOT: Damage: ${Math.round(stat.get("spellDamage")[1])} (${stat.get("spellCost")[2]} mana)`)
+   console.log(`BOT: Mana Sustain ${manaSustain}, ${stat.get("manaRegen")} mana regen / ${stat.get("manaSteal")} mana steal`)
+   console.log(`BOT: EHP: ${Math.round(stat.get("EHP")[0])}/${Math.round(stat.get("EHP")[1])} (${stat.get("spellHeal")[0]} first pulse)`)
+   console.log(`BOT: Misc. : ${stat.get("walkSpeed")} walk speed`)
+   console.log(stat.get("URL"))
 }
 
 

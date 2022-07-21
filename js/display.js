@@ -1814,7 +1814,7 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
         second.classList.add("Mana");
         second.classList.add("tooltip");
 
-        stat.spellCost.push(second.textContent)
+        player_build.statMap.get("spellCost").push(parseInt(second.textContent))
 
         let int_redux = skillPointsToPercentage(build.total_skillpoints[2]).toFixed(2);
         let spPct_redux = (build.statMap.get("spPct" + spellIdx)/100).toFixed(2);
@@ -1895,7 +1895,7 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
             let critAverage = (totalDamCrit[0]+totalDamCrit[1])/2 || 0;
             let averageDamage = (1-critChance)*nonCritAverage+critChance*critAverage || 0;
 
-            stat.spellDamage.push(averageDamage)
+            player_build.statMap.get("spellDamage").push(averageDamage)
             //IMPORTANT Damage for all spells
 
             let averageLabel = document.createElement("p");
@@ -1951,6 +1951,7 @@ function displaySpellDamage(parent_elem, overallparent_elem, build, spell, spell
             save_damages.push(averageDamage);
         } else if (part.type === "heal") {
             let heal_amount = (part.strength * build.getDefenseStats()[0] * Math.max(0.5,Math.min(1.75, 1 + 0.5 * stats.get("wDamPct")/100))).toFixed(2);
+            player_build.statMap.get("spellHeal").push(parseInt(heal_amount));
             tooltiptext = ` = ${part.strength} * ${build.getDefenseStats()[0]} * max(0.5, min(1.75, 1 + 0.5 * ${stats.get("wDamPct")/100}))`;
             let healLabel = document.createElement("p");
             healLabel.textContent = heal_amount;
